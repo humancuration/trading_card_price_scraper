@@ -1,0 +1,89 @@
+/* theme.css */
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --link-color: #1a0dab;
+  --link-hover-color: #6600cc;
+}
+
+.dark-mode {
+  --background-color: #0d1117;
+  --text-color: #ececec;
+  --link-color: #8ab4f8;
+  --link-hover-color: #bb86fc;
+}
+
+/* Apply variables globally */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Link styles */
+a {
+  color: var(--link-color);
+}
+
+a:hover {
+  color: var(--link-hover-color);
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"] {
+  background-color: #333; /* Dark input background */
+  color: white; /* White text in inputs */
+  border: 1px solid #555; /* Darker border */
+  padding: 4px; /* Padding for better appearance */
+  line-height: 1.5;
+  vertical-align: middle;
+  border-radius: 4px; /* Rounded corners */
+}
+
+input[type="checkbox"] {
+  appearance: none; /* Remove default checkbox styles */
+  width: 20px; /* Set width for the custom checkbox */
+  height: 20px; /* Set height for the custom checkbox */
+  background-color: #0f0f0f; /* Unchecked background */
+  border: 2px solid #555; /* Unchecked border color */
+  border-radius: 4px; /* Rounded corners */
+  vertical-align: middle;
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
+}
+
+/* Checkbox checked styles */
+input[type="checkbox"]:checked {
+  background-color: #555; /* Change background when checked */
+  border-color: #555; /* Change border when checked */
+}
+
+/* Optional: Add a checkmark or custom design */
+input[type="checkbox"]:checked::after {
+  content: '✔'; /* Add a checkmark */
+  display: block;
+  color: white; /* Checkmark color */
+  font-size: 16px; /* Checkmark size */
+  text-align: center; /* Center the checkmark */
+  line-height: 15px; /* Align with checkbox */
+}
+
+label {
+  display: inline-block; /* Allow vertical alignment */
+  /* vertical-align: middle; Align label vertically with input */
+  /* line-height: 4px; */
+  margin-right: 8px; /* Space between label and input */
+}
+
+button {
+  background-color: #444; /* Darker button background */
+  color: white; /* White text for buttons */
+  border: none; /* Remove default border */
+  padding: 10px 15px; /* Padding for buttons */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+button:hover {
+  background-color: #555; /* Darker button on hover */
+}
