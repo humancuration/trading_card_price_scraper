@@ -1,4 +1,4 @@
-Bulk tool for scraping trading card prices. Allows for csv import and export.<br/>
+<p align="center"> Bulk tool for scraping trading card prices. Allows for csv import and export.<br/>
 Currently hosted with aws at https://www.synderispricechecker.com/.<br/>
 Currently supports Pokemon, Magic and Yugioh cards and most of the types of cards from each brand/format.
 <img src="https://i.imgur.com/BTSswG8.png">
@@ -9,4 +9,4 @@ If the error is in Card Count the red marking will be removed when fixed otherwi
 It will still let you submit with errors but depending on the error the data you get may be for a different card or the total price calculation will be incorrect.
 The view that you see is what will be submitted.
 <img src="https://i.imgur.com/YLdg25l.png">
-The table will provide price data and totals adjusted for card count along with its page link. The card image can also be seen by hovering over the card name. This data can be exported to CSV in the same format as the table.
+The table will provide price data and totals adjusted for card count along with its page link. The card image can also be seen by hovering over the card name. This data can be exported to CSV in the same format as the table.</p>
