@@ -1,5 +1,5 @@
 Bulk tool for scraping trading card prices.
-Currently hosted with aws at https://www.synderispricechecker.com/
+Currently hosted with aws at https://www.synderispricechecker.com/.
 Allows for csv import and export.
 Currently supports Pokemon, Magic and Yugioh cards and most of the types of cards from each brand/format.
 <img src="https://i.imgur.com/BTSswG8.png">
