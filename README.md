@@ -1,6 +1,5 @@
-Bulk tool for scraping trading card prices.<br/>
+Bulk tool for scraping trading card prices. Allows for csv import and export.<br/>
 Currently hosted with aws at https://www.synderispricechecker.com/.<br/>
-Allows for csv import and export.<br/>
 Currently supports Pokemon, Magic and Yugioh cards and most of the types of cards from each brand/format.
 <img src="https://i.imgur.com/BTSswG8.png">
 The CSV import tool will attempt to fix data when it is empty such as changing null values in Card Count to 1 by default. Otherwise errors will be marked in red.
