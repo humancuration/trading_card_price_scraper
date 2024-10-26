@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 
 import card_scraper
+from .card_variants import get_card_variants, CardVariant
 
 
 app = FastAPI()
@@ -96,3 +97,10 @@ async def get_results(request: Request):
     }
     
 
+@app.get("/variants", response_model=List[CardVariant])
+async def get_variants(card: str, id: str):
+    try:
+        variants = get_card_variants(card, id)
+        return variants
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

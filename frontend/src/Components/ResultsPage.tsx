@@ -12,6 +12,17 @@ interface ResultData {
     final_link: string;
     img_link: string;
     estimatedGrades?: string[];
+    isAdvanced?: boolean;
+    cardVariants?: CardVariant[];
+}
+
+interface CardVariant {
+    type: string;  // 'shadowless', 'no_symbol', 'artwork_variant', etc.
+    name: string;
+    id: string;
+    img_link: string;
+    final_link: string;
+    price_modifier: number;
 }
 
 interface Totals {
@@ -24,6 +35,9 @@ const ResultsPage: React.FC = () => {
     const [selectedGrades, setSelectedGrades] = useState<{[key: string]: string}>({});
     const [showEstimatedTotals, setShowEstimatedTotals] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
+    const [showAdvancedSearch, setShowAdvancedSearch] = useState<boolean>(false);
+    const [advancedSearchTypes, setAdvancedSearchTypes] = useState<string[]>([]);
+    const [selectedVariants, setSelectedVariants] = useState<{[key: string]: CardVariant}>({});
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -58,6 +72,8 @@ const ResultsPage: React.FC = () => {
                         final_link: data.results.final_link[i],
                         img_link: data.results.img_link[i],
                         estimatedGrades: data.results.estimatedGrades ? data.results.estimatedGrades[i].split(',') : undefined,
+                        isAdvanced: data.results.isAdvanced ? data.results.isAdvanced[i] : undefined,
+                        cardVariants: data.results.cardVariants ? data.results.cardVariants[i] : undefined,
                     });
                 }
                 setResults(formattedResults);
@@ -174,6 +190,33 @@ const ResultsPage: React.FC = () => {
         }, {} as {[key: string]: number});
     };
 
+    const handleAdvancedSearchToggle = (index: number) => {
+        const newResults = [...results];
+        newResults[index].isAdvanced = !newResults[index].isAdvanced;
+        setResults(newResults);
+        
+        if (newResults[index].isAdvanced) {
+            fetchCardVariants(newResults[index]);
+        }
+    };
+
+    const fetchCardVariants = async (card: ResultData) => {
+        try {
+            const response = await fetch(
+                `https://pueedtoh01.execute-api.us-east-2.amazonaws.com/prod/variants?card=${card.card}&id=${card.id}`
+            );
+            if (!response.ok) throw new Error('Failed to fetch variants');
+            
+            const variants = await response.json();
+            const updatedResults = results.map(r => 
+                r.id === card.id ? { ...r, cardVariants: variants } : r
+            );
+            setResults(updatedResults);
+        } catch (err) {
+            console.error('Error fetching variants:', err);
+        }
+    };
+
     return (
         <div className="results-container">
             <h1>Results</h1>
@@ -181,6 +224,43 @@ const ResultsPage: React.FC = () => {
             <button onClick={downloadCSV} style={{ marginBottom: '20px' }} className="download-button">
                 Download CSV
             </button>
+            <div className="advanced-search-controls">
+                <button 
+                    onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                    className="toggle-advanced-button"
+                >
+                    {showAdvancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search'}
+                </button>
+                {showAdvancedSearch && (
+                    <div className="advanced-options">
+                        <label>
+                            <input 
+                                type="checkbox" 
+                                onChange={(e) => {
+                                    const newResults = results.map(r => ({
+                                        ...r,
+                                        isAdvanced: e.target.checked
+                                    }));
+                                    setResults(newResults);
+                                    if (e.target.checked) {
+                                        results.forEach(fetchCardVariants);
+                                    }
+                                }}
+                            />
+                            Check/Uncheck All Advanced Search
+                        </label>
+                        <input 
+                            type="text"
+                            placeholder="Enter variant type (e.g., shadowless)"
+                            onChange={(e) => setAdvancedSearchTypes(
+                                e.target.value.split(',').map(t => t.trim())
+                            )}
+                            className="variant-type-input"
+                        />
+                    </div>
+                )}
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -195,24 +275,60 @@ const ResultsPage: React.FC = () => {
                 </thead>
                 <tbody>
                     {results.map((item, index) => (
-                        <tr key={index}>
-                            <td>
-                                <span className="img-hover-link">
-                                    {item.card}
-                                    <span className="img-hover-tooltip">
-                                        <img src={item.img_link} alt="Card" />
+                        <>
+                            <tr key={`${index}-main`}>
+                                <td>
+                                    <span className="img-hover-link">
+                                        {item.card}
+                                        <span className="img-hover-tooltip">
+                                            <img src={item.img_link} alt="Card" />
+                                        </span>
                                     </span>
-                                </span>
-                            </td>
-                            <td>{item.id}</td>
-                            <td>{item.card_count}</td>
-                            {Object.values(item.grades).map((gradeValue, gradeIndex) => (
-                                <td key={gradeIndex}>{gradeValue}</td>
+                                </td>
+                                <td>{item.id}</td>
+                                <td>{item.card_count}</td>
+                                {Object.values(item.grades).map((gradeValue, gradeIndex) => (
+                                    <td key={gradeIndex}>{gradeValue}</td>
+                                ))}
+                                <td>
+                                    <a href={item.final_link} target="_blank" rel="noopener noreferrer">View</a>
+                                </td>
+                                <td>
+                                    <input 
+                                        type="checkbox"
+                                        checked={item.isAdvanced}
+                                        onChange={() => handleAdvancedSearchToggle(index)}
+                                    />
+                                </td>
+                            </tr>
+                            {item.isAdvanced && item.cardVariants?.map((variant, vIndex) => (
+                                <tr 
+                                    key={`${index}-variant-${vIndex}`}
+                                    className="variant-row"
+                                >
+                                    <td>
+                                        <span className="variant-tag">{variant.type}</span>
+                                        <span className="img-hover-link">
+                                            {variant.name}
+                                            <span className="img-hover-tooltip">
+                                                <img src={variant.img_link} alt="Card Variant" />
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td>{variant.id}</td>
+                                    <td>{item.card_count}</td>
+                                    {/* Modified prices based on variant.price_modifier */}
+                                    {Object.entries(item.grades).map(([grade, price], gradeIndex) => (
+                                        <td key={gradeIndex}>
+                                            ${(parseFloat(price.replace(/[^0-9.-]+/g, '')) * variant.price_modifier).toFixed(2)}
+                                        </td>
+                                    ))}
+                                    <td>
+                                        <a href={variant.final_link} target="_blank" rel="noopener noreferrer">View</a>
+                                    </td>
+                                </tr>
                             ))}
-                            <td>
-                                <a href={item.final_link} target="_blank" rel="noopener noreferrer">View</a>
-                            </td>
-                        </tr>
+                        </>
                     ))}
                     <tr className="totals-row">
                         <td colSpan={2}><strong>Totals:</strong></td>

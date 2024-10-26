@@ -235,3 +235,53 @@ td[style*="cursor: pointer"]:hover {
 .variations-section li {
     margin: 8px 0;
 }
+
+/* Add to your existing CSS */
+
+.advanced-search-controls {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.toggle-advanced-button {
+    background-color: #2196f3;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.advanced-options {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.variant-type-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 300px;
+}
+
+.variant-row {
+    background-color: #f8f9fa;
+}
+
+.variant-tag {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-right: 8px;
+}
+
+.variant-row td {
+    padding-left: 20px;
+}
