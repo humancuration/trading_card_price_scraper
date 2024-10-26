@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion';
-import { useSpring } from '@react-spring/web';
+import { motion, useMotionValue, useTransform, useAnimation, useSpring } from 'framer-motion';
 import { useDrag } from '@use-gesture/react';
 
 interface GestureConfig {
@@ -8,7 +7,7 @@ interface GestureConfig {
     rotationFactor?: number;
     scaleRange?: [number, number];
     hapticDuration?: number;
-    hapticStrength?: number;
+    hapticStrength?: 'low' | 'medium' | 'high';
     velocityFactor?: number;
 }
 
@@ -56,11 +55,8 @@ export const InteractiveElement: React.FC<{
     );
 
     // Spring animation for smooth return
-    const [{ springX, springY }, springApi] = useSpring(() => ({
-        springX: 0,
-        springY: 0,
-        config: { tension: 300, friction: 20 }
-    }));
+    const springX = useSpring(x);
+    const springY = useSpring(y);
 
     const triggerHaptic = (duration: number = settings.hapticDuration!, pattern?: number[]) => {
         if ('vibrate' in navigator) {
@@ -74,7 +70,7 @@ export const InteractiveElement: React.FC<{
 
     // Gesture binding
     const bind = useDrag(
-        ({ down, movement: [mx, my], velocity: [vx, vy], direction: [dx, dy], tap, time }) => {
+        ({ down, movement: [mx, my], velocity: [vx, vy], direction: [dx, dy], tap }) => {
             // Handle tap
             if (tap && handlers.onTap) {
                 handlers.onTap();
@@ -126,13 +122,8 @@ export const InteractiveElement: React.FC<{
                 }
 
                 // Reset position with spring animation
-                springApi.start({
-                    springX: 0,
-                    springY: 0,
-                    config: {
-                        velocity: Math.max(Math.abs(vx), Math.abs(vy)) * settings.velocityFactor!
-                    }
-                });
+                x.set(0);
+                y.set(0);
 
                 // Reset scale and rotation
                 controls.start({
@@ -165,7 +156,7 @@ export const InteractiveElement: React.FC<{
                 touchAction: 'none'
             }}
             animate={controls}
-            {...bind()}
+            {...(bind() as any)} // Type assertion to resolve the conflict
         >
             {children}
         </motion.div>

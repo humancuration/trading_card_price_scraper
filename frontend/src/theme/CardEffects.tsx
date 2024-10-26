@@ -4,12 +4,32 @@ import { useSpring, animated } from '@react-spring/web';
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, PresentationControls } from '@react-three/drei';
+import { createParticleSystem, ParticleEffect } from '../effects/ParticleSystem';
+import type { ParticleConfig } from '../types';
+import { GLTF } from 'three-stdlib';
+
+interface GLTFResult extends GLTF {
+    nodes: {
+        // Define the specific mesh names from your card.glb model
+        [key: string]: THREE.Mesh
+    };
+    materials: {
+        // Define materials if needed
+        [key: string]: THREE.Material
+    };
+}
 
 interface CardRarityEffect {
-    threshold: number;  // Price threshold or rarity score
+    threshold: number;
     effects: {
         glow: string;
-        particles: string;
+        particles: {
+            count: number;
+            spread: number;
+            speed: number;
+            size: number;
+            color: string;
+        };
         sound: string;
         animation: string;
         aura: string;
@@ -21,7 +41,13 @@ const rarityEffects: CardRarityEffect[] = [
         threshold: 1000,  // Ultra Rare / High Value
         effects: {
             glow: 'rainbow-prismatic',
-            particles: 'starfield',
+            particles: {
+                count: 1000,
+                spread: 50,
+                speed: 0.5,
+                size: 0.1,
+                color: '#ffffff'
+            },
             sound: '/sounds/mythic-reveal.mp3',
             animation: 'mythic-float',
             aura: 'legendary-flames'
@@ -31,7 +57,13 @@ const rarityEffects: CardRarityEffect[] = [
         threshold: 500,  // Super Rare
         effects: {
             glow: 'golden-shine',
-            particles: 'sparkles',
+            particles: {
+                count: 500,
+                spread: 30,
+                speed: 1,
+                size: 0.2,
+                color: '#ffaa00'
+            },
             sound: '/sounds/rare-reveal.mp3',
             animation: 'rare-spin',
             aura: 'rare-glow'
@@ -41,7 +73,13 @@ const rarityEffects: CardRarityEffect[] = [
         threshold: 100,  // Rare
         effects: {
             glow: 'blue-essence',
-            particles: 'dust',
+            particles: {
+                count: 300,
+                spread: 20,
+                speed: 0.3,
+                size: 0.05,
+                color: '#4444ff'
+            },
             sound: '/sounds/uncommon-reveal.mp3',
             animation: 'hover',
             aura: 'blue-mist'
@@ -54,16 +92,13 @@ interface Card3DModel {
     materials: THREE.Material[];
 }
 
-const Card3D: React.FC<{ model: Card3DModel, rarity: number }> = ({ model, rarity }) => {
+const Card3D: React.FC<{ model: GLTFResult, rarity: number }> = ({ model, rarity }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const rarityEffect = rarityEffects.find(effect => rarity >= effect.threshold);
 
     useFrame(({ clock }) => {
         if (meshRef.current && rarityEffect) {
-            // Add floating animation
             meshRef.current.position.y = Math.sin(clock.getElapsedTime()) * 0.1;
-            
-            // Add rotation based on rarity
             if (rarity > 500) {
                 meshRef.current.rotation.y += 0.01;
             }
@@ -71,16 +106,7 @@ const Card3D: React.FC<{ model: Card3DModel, rarity: number }> = ({ model, rarit
     });
 
     return (
-        <mesh ref={meshRef} geometry={model.geometry}>
-            {model.materials.map((material, index) => (
-                <meshStandardMaterial 
-                    key={index}
-                    {...material}
-                    emissive={rarityEffect?.effects.glow}
-                    emissiveIntensity={rarity / 1000}
-                />
-            ))}
-        </mesh>
+        <primitive object={(model as GLTF).scene} ref={meshRef} />
     );
 };
 
@@ -118,10 +144,9 @@ export const CardReveal: React.FC<CardRevealProps> = ({
         setFlipped(true);
         playRevealSound();
         
-        // Trigger particle effects
         if (rarityEffect) {
-            // Create particle system based on rarity
-            createParticleSystem(rarityEffect.effects.particles);
+            const config = particleConfigs[rarityEffect.effects.particles.color];
+            createParticleSystem(config);
         }
     };
 
@@ -142,13 +167,16 @@ export const CardReveal: React.FC<CardRevealProps> = ({
                         polar={[-Math.PI / 4, Math.PI / 4]}
                         azimuth={[-Math.PI / 4, Math.PI / 4]}
                     >
-                        <Card3D model={useGLTF('/models/card.glb')} rarity={marketPrice} />
+                        <Card3D model={useGLTF('/models/card.glb') as GLTFResult} rarity={marketPrice} />
                     </PresentationControls>
                     
                     {rarityEffect && (
-                        <Particles
-                            type={rarityEffect.effects.particles}
-                            intensity={marketPrice / 1000}
+                        <ParticleEffect 
+                            count={rarityEffect.effects.particles.count || 1000}
+                            spread={rarityEffect.effects.particles.spread || 50}
+                            speed={rarityEffect.effects.particles.speed || 0.5}
+                            size={rarityEffect.effects.particles.size || 0.1}
+                            color={rarityEffect.effects.particles.color || '#ffffff'}
                         />
                     )}
                 </Canvas>
@@ -168,4 +196,29 @@ export const CardReveal: React.FC<CardRevealProps> = ({
             </animated.div>
         </div>
     );
+};
+
+// Add particle configurations
+const particleConfigs: Record<string, ParticleConfig> = {
+    starfield: {
+        count: 1000,
+        spread: 50,
+        speed: 0.5,
+        size: 0.1,
+        color: '#ffffff'
+    },
+    sparkles: {
+        count: 500,
+        spread: 30,
+        speed: 1,
+        size: 0.2,
+        color: '#ffaa00'
+    },
+    dust: {
+        count: 300,
+        spread: 20,
+        speed: 0.3,
+        size: 0.05,
+        color: '#4444ff'
+    }
 };

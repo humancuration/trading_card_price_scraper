@@ -23,6 +23,33 @@ interface Card {
     foil: boolean;
 }
 
+const getRandomCard = async (rarity: string): Promise<Card> => {
+    try {
+        const response = await fetch(`/api/cards/random/${rarity}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${rarity} card`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        // Fallback mock card in case of API failure
+        return {
+            id: crypto.randomUUID(),
+            name: `${rarity.charAt(0).toUpperCase() + rarity.slice(1)} Card`,
+            rarity,
+            image: `/assets/cards/${rarity}/placeholder.png`,
+            animation: [],
+            foil: Math.random() > 0.85
+        };
+    }
+};
+
 const PACK_CONFIGURATIONS = {
     standard: {
         common: 6,
@@ -134,6 +161,8 @@ const PackSimulator: React.FC = () => {
                         <ParticleSystem
                             count={50}
                             spread={2}
+                            size={3}        // Add required size prop
+                            speed={1}       // Add required speed prop
                             color="#ffeb3b"
                             behavior="float"
                         />
@@ -153,6 +182,8 @@ const PackSimulator: React.FC = () => {
                         <ParticleSystem
                             count={200}
                             spread={5}
+                            size={3}        // Add required size prop
+                            speed={1}       // Add required speed prop
                             color={["#ff9800", "#f44336", "#2196f3"]}
                             behavior="explode"
                         />

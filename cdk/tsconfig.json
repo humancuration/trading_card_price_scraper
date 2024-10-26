@@ -20,9 +20,12 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
+    "types": ["@emotion/react/types/css-prop"],
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react"
   },
   "exclude": [
     "node_modules",

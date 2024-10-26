@@ -5,6 +5,7 @@ import {
   Table, 
   TableBody, 
   TableCell, 
+  Typography,  // Add this
   TableContainer, 
   TableHead, 
   TableRow,
@@ -29,7 +30,8 @@ import {
   Search, 
   CheckCircle, 
   Cancel,
-  ExpandMore 
+  ExpandMore,
+  Close  // Add this
 } from '@mui/icons-material';
 
 interface ResultData {
@@ -60,6 +62,21 @@ interface CardVariant {
 interface Totals {
     [key: string]: number;
 }
+
+const CSVGuideContent: React.FC = () => {
+  return (
+    <Typography>
+      <p>The CSV file contains the following columns:</p>
+      <ul>
+        <li>Card: Name of the card</li>
+        <li>ID: Unique identifier</li>
+        <li>Card Count: Number of cards</li>
+        <li>Grade columns: Price for each grade</li>
+        <li>Final Link: URL to card details</li>
+      </ul>
+    </Typography>
+  );
+};
 
 const ResultsPage: React.FC = () => {
     const [results, setResults] = useState<ResultData[]>([]);

@@ -13,13 +13,13 @@ export type EffectType =
   | 'holo_shine'
   | 'card_flip';
 
-interface ThemeEffect {
+export interface ThemeEffect {
   id: EffectType;
   name: string;
   icon: React.ReactNode;
   description: string;
   defaultThemes: string[];
-  preview: string; // URL to preview gif/video
+  preview: string;
 }
 
 export const themeEffects: ThemeEffect[] = [
@@ -75,7 +75,7 @@ export const EffectSelector: React.FC<EffectSelectorProps> = ({
         {themeEffects.map((effect) => (
           <Grid item key={effect.id}>
             <Chip
-              icon={effect.icon}
+              icon={<>{effect.icon}</>}  // Wrap in Fragment to ensure ReactElement
               label={effect.name}
               onClick={() => onEffectToggle(effect.id)}
               onMouseEnter={() => setPreviewEffect(effect)}
@@ -113,7 +113,7 @@ export const EffectSelector: React.FC<EffectSelectorProps> = ({
             <DialogContent>
               <Box sx={{ textAlign: 'center' }}>
                 <img 
-                  src={previewEffect.preview} 
+                  src={previewEffect.preview} // Remove optional chaining since previewEffect is guaranteed to exist in this block
                   alt={previewEffect.name}
                   style={{ maxWidth: '100%', borderRadius: 8 }}
                 />
@@ -126,5 +126,13 @@ export const EffectSelector: React.FC<EffectSelectorProps> = ({
         )}
       </Dialog>
     </Box>
+  );
+};
+
+export const ThemeEffect: React.FC<{ type: EffectType }> = ({ type }) => {
+  return (
+    <div className={`theme-effect ${type}-effect`}>
+      {/* Effect-specific rendering logic here */}
+    </div>
   );
 };

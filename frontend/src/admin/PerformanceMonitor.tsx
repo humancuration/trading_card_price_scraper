@@ -12,6 +12,17 @@ import {
 } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 
+// Add this type declaration at the top of the file
+declare global {
+    interface Performance {
+        memory?: {
+            usedJSHeapSize: number;
+            totalJSHeapSize: number;
+            jsHeapSizeLimit: number;
+        }
+    }
+}
+
 interface PerformanceMetrics {
     fps: number;
     memory: {

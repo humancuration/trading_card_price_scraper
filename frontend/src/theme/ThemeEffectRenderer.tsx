@@ -28,7 +28,7 @@ const ParticleSystem: React.FC<{ count: number, color: string }> = ({ count, col
     <points ref={particles}>
       <bufferGeometry>
         <bufferAttribute
-          attachObject={['attributes', 'position']}
+          attach="attributes-position"
           count={count}
           array={new Float32Array(count * 3).map(() => (Math.random() - 0.5) * 10)}
           itemSize={3}

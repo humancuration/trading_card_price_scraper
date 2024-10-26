@@ -17,7 +17,7 @@ export interface RevealSequence {
 export interface CardEffect {
     type: string;
     intensity: number;
-    config?: any;
+    config?: Partial<ParticleConfig>; // Make it partial and properly typed
 }
 
 export interface ParticleConfig {

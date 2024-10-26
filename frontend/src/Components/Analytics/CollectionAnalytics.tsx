@@ -10,7 +10,8 @@ import {
     Chip,
     Button,
     Tooltip,
-    IconButton
+    IconButton,
+    LinearProgress
 } from '@mui/material';
 import {
     Timeline,

@@ -6,7 +6,7 @@ import {
     MenuItem, 
     ListItemIcon, 
     ListItemText,
-    useTheme
+    Typography
 } from '@mui/material';
 import {
     Palette,
@@ -20,9 +20,9 @@ import {
     Castle, // Dragon-type theme
     Psychology // Psychic-type theme
 } from '@mui/icons-material';
-import { useTheme, themeEffects } from '../theme/ThemeContext';
+import { useTheme } from '../theme/ThemeContext';
 import type { ThemeType, EffectType } from '../theme/ThemeContext';
-import { EffectSelector } from '../theme/ThemeEffects';
+import { EffectSelector, themeEffects } from '../theme/ThemeEffects';  // Import themeEffects from here
 
 interface ThemeOption {
     name: string;
@@ -138,7 +138,7 @@ const ThemeSelector: React.FC = () => {
                     borderRadius: '12px',
                     padding: '8px 16px',
                     '&:hover': {
-                        background: 'rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.2)' as const // Add type assertion
                     }
                 }}
             >
@@ -180,7 +180,7 @@ const ThemeSelector: React.FC = () => {
                                 height: 20,
                                 borderRadius: '50%',
                                 ml: 2,
-                                background: option.backgroundEffect || option.primaryColor,
+                                background: (option.backgroundEffect || option.primaryColor) as string,
                                 border: '2px solid',
                                 borderColor: option.secondaryColor
                             }}

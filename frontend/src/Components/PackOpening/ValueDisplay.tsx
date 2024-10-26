@@ -55,7 +55,7 @@ export const ValueDisplay: React.FC<ValueDisplayProps> = ({ value, totalValue, i
                                 textShadow: `0 0 10px hsla(${hue}, 100%, 50%, 0.5)`,
                             }}
                         >
-                            ${displayValue.to(n => n.toFixed(2))}
+                            ${displayValue.to((n: number) => n.toFixed(2)).toString()}
                         </animated.span>
                     </motion.div>
                 )}
@@ -69,7 +69,7 @@ export const ValueDisplay: React.FC<ValueDisplayProps> = ({ value, totalValue, i
                         fontWeight: 'bold',
                     }}
                 >
-                    ${displayTotal.to(n => n.toFixed(2))}
+                    ${displayTotal.to((n: number) => n.toFixed(2)).get()}
                 </animated.span>
             </div>
         </div>

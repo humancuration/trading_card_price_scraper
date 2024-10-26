@@ -1,11 +1,11 @@
-import { CardRarity, CardType, CardSet } from '../types/cards';
+import { Rarity, BaseCard, CardSet } from '../types/cards';
 
 interface CardData {
     id: string;
     name: string;
-    set: CardSet;
-    rarity: CardRarity;
-    type: CardType;
+    type: BaseCard;
+    set: CardSet<BaseCard>;  // Use BaseCard directly instead of typeof type
+    rarity: Rarity;
     image: string;
     marketPrice: number;
     foil: boolean;
@@ -54,7 +54,7 @@ class CardDataService {
         const setCards = await this.getSetCards(setId);
 
         // Helper function to get random cards of a specific rarity
-        const getRandomCards = (rarity: CardRarity, count: number): CardData[] => {
+        const getRandomCards = (rarity: Rarity, count: number): CardData[] => {
             const rarityCards = setCards.filter(card => card.rarity === rarity);
             const selected: CardData[] = [];
             for (let i = 0; i < count; i++) {
@@ -65,18 +65,18 @@ class CardDataService {
         };
 
         // Add guaranteed cards
-        pack.push(...getRandomCards('common', odds.common.count));
-        pack.push(...getRandomCards('uncommon', odds.uncommon.count));
-        pack.push(...getRandomCards('rare', odds.rare.count));
+        pack.push(...getRandomCards('Common', odds.common.count));
+        pack.push(...getRandomCards('Uncommon', odds.uncommon.count));
+        pack.push(...getRandomCards('Rare', odds.rare.count));
 
         // Check for ultra rare
         if (Math.random() < odds.ultraRare.chance) {
-            pack.push(...getRandomCards('ultraRare', 1));
+            pack.push(...getRandomCards('Ultra Rare', 1));
         }
 
         // Check for secret rare
         if (Math.random() < odds.secret.chance) {
-            pack.push(...getRandomCards('secret', 1));
+            pack.push(...getRandomCards('Secret Rare', 1));
         }
 
         // Calculate pack value
@@ -137,7 +137,7 @@ class CardDataService {
             rarityDistribution: cards.reduce((dist, card) => {
                 dist[card.rarity] = (dist[card.rarity] || 0) + 1;
                 return dist;
-            }, {} as Record<CardRarity, number>),
+            }, {} as Record<Rarity, number>),
             highestValue: Math.max(...cards.map(card => card.marketPrice))
         };
 

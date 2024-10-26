@@ -4,13 +4,21 @@ import { useSpring, animated, config } from '@react-spring/web';
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 
-interface RevealSequence {
+// Add 'export' keyword to make the interface available to other modules
+export interface RevealSequence {
     preDelay: number;
     flipDuration: number;
     glowDelay: number;
     particleDelay: number;
     soundDelay: number;
     hapticPattern: number[];
+    effects?: {
+        preReveal?: string;
+        mainEffect?: string;
+        postReveal?: string;
+        ambient?: string;
+        sound?: string[];
+    };
 }
 
 const revealSequences: Record<string, RevealSequence> = {
@@ -194,7 +202,7 @@ const ParticleBurst: React.FC<{ intensity: number }> = ({ intensity }) => {
         <points ref={particles}>
             <bufferGeometry>
                 <bufferAttribute
-                    attachObject={['attributes', 'position']}
+                    attach="attributes-position"
                     count={1000 * intensity}
                     array={new Float32Array(3000 * intensity).map(() => 
                         (Math.random() - 0.5) * 10

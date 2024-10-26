@@ -1,9 +1,21 @@
 import React, { createContext, useContext, useState } from 'react';
 import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material';
-import { EffectType } from './ThemeEffects';
+import { ThemeEffect } from './ThemeEffects';
 
 // Define theme types
 export type ThemeType = 'light' | 'dark' | 'fire' | 'water' | 'grass' | 'electric' | 'dragon' | 'psychic' | 'holographic';
+
+// Declare the type here or in a separate types file
+export type EffectType = 
+  | 'particles' 
+  | 'floating_cards' 
+  | 'fire_glow' 
+  | 'water_ripple'
+  | 'electric_spark'
+  | 'psychic_waves'
+  | 'dragon_aura'
+  | 'holo_shine'
+  | 'card_flip';
 
 interface ThemeContextType {
     currentTheme: ThemeType;
@@ -15,7 +27,14 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // Theme configurations
-const themeConfigs = {
+const themeConfigs: Record<ThemeType, {
+    primary: string;
+    secondary: string;
+    background: string;
+    surface: string;
+    text: string;
+    gradient?: string;
+}> = {
     light: {
         primary: '#2196f3',
         secondary: '#1976d2',
@@ -46,8 +65,71 @@ const themeConfigs = {
         text: '#ffffff',
         gradient: 'radial-gradient(circle, #3399ff 0%, #0066cc 100%)',
     },
-    // ... add other theme configs
+    grass: {
+        primary: '#4caf50',
+        secondary: '#388e3c',
+        background: '#1a2f1a',
+        surface: '#2d3d2d',
+        text: '#ffffff',
+        gradient: 'linear-gradient(45deg, #4caf50 0%, #81c784 100%)',
+    },
+    electric: {
+        primary: '#ffd700',
+        secondary: '#ffeb3b',
+        background: '#2d2d1a',
+        surface: '#3d3d2a',
+        text: '#ffffff',
+        gradient: 'linear-gradient(45deg, #ffd700 0%, #ffeb3b 100%)',
+    },
+    dragon: {
+        primary: '#7038f8',
+        secondary: '#483d8b',
+        background: '#1a1a2e',
+        surface: '#2a2a3e',
+        text: '#ffffff',
+        gradient: 'linear-gradient(45deg, #7038f8 0%, #483d8b 100%)',
+    },
+    psychic: {
+        primary: '#ff69b4',
+        secondary: '#da70d6',
+        background: '#2e1a2e',
+        surface: '#3e2a3e',
+        text: '#ffffff',
+        gradient: 'radial-gradient(circle, #ff69b4 0%, #da70d6 100%)',
+    },
+    holographic: {
+        primary: '#00ffff',
+        secondary: '#ff00ff',
+        background: '#000000',
+        surface: '#1a1a1a',
+        text: '#ffffff',
+        gradient: 'linear-gradient(45deg, #00ffff 0%, #ff00ff 50%, #00ffff 100%)',
+    },
 };
+
+// Add this interface export
+export interface ThemeConfig {
+    palette: {
+        primary: {
+            main: string;
+            light?: string;
+            dark?: string;
+        };
+        secondary: {
+            main: string;
+            light?: string;
+            dark?: string;
+        };
+        background: {
+            default: string;
+            paper: string;
+        };
+        text: {
+            primary: string;
+            secondary?: string;
+        };
+    };
+}
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [currentTheme, setCurrentTheme] = useState<ThemeType>('light');
