@@ -1,0 +1,51 @@
+.value-display-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1000;
+}
+
+.current-value {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.total-value {
+    font-size: 1.2rem;
+    text-align: right;
+    color: #888;
+}
+
+.value-milestone {
+    position: absolute;
+    font-size: 3rem;
+    font-weight: bold;
+    color: gold;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    pointer-events: none;
+    animation: milestone-float 2s ease-out forwards;
+}
+
+@keyframes milestone-float {
+    0% {
+        transform: scale(0.5) translateY(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.5) translateY(-50px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translateY(-100px);
+        opacity: 0;
+    }
+}

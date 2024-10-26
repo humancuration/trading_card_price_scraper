@@ -1,0 +1,74 @@
+.interactive-element {
+    position: relative;
+    user-select: none;
+    touch-action: none;
+    transform-origin: center center;
+    will-change: transform;
+}
+
+/* Hover effect for desktop */
+@media (hover: hover) {
+    .interactive-element:hover {
+        filter: brightness(1.05);
+    }
+}
+
+/* Active state */
+.interactive-element:active {
+    filter: brightness(0.95);
+}
+
+/* Custom cursor for draggable elements */
+.interactive-element[data-draggable="true"] {
+    cursor: grab;
+}
+
+.interactive-element[data-dragging="true"] {
+    cursor: grabbing;
+}
+
+/* Transition for smooth animations */
+.interactive-element {
+    transition: filter 0.2s ease;
+}
+
+/* Perspective container for 3D effects */
+.perspective-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+/* Reflection effect */
+.reflection {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.05)
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.interactive-element:hover .reflection {
+    opacity: 1;
+}
+
+/* Touch ripple effect */
+.touch-ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    background: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    animation: ripple 0.6s linear;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
