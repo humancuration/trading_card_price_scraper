@@ -285,3 +285,54 @@ td[style*="cursor: pointer"]:hover {
 .variant-row td {
     padding-left: 20px;
 }
+
+/* Add to your existing styles */
+
+.row-clickable {
+    cursor: pointer;
+    user-select: none;  /* Prevents text selection while shift-clicking */
+    transition: background-color 0.2s ease;
+}
+
+.row-clickable:hover {
+    background-color: #f5f5f5;
+}
+
+.row-excluded {
+    opacity: 0.5;
+    background-color: #f8f8f8;
+    text-decoration: line-through;
+}
+
+.row-selected {
+    background-color: #e3f2fd;
+}
+
+.variant-row.row-excluded {
+    opacity: 0.5;
+    background-color: #f8f8f8;
+}
+
+/* Add a visual indicator for clickable rows */
+.row-clickable td:first-child::before {
+    content: "☐";
+    margin-right: 8px;
+    color: #666;
+}
+
+.row-excluded td:first-child::before {
+    content: "☒";
+    color: #999;
+}
+
+/* Add keyboard shortcut hint */
+.keyboard-shortcuts {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+}

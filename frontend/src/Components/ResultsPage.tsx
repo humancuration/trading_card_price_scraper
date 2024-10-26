@@ -14,6 +14,7 @@ interface ResultData {
     estimatedGrades?: string[];
     isAdvanced?: boolean;
     cardVariants?: CardVariant[];
+    isExcluded?: boolean;  // Add this new property
 }
 
 interface CardVariant {
@@ -38,6 +39,8 @@ const ResultsPage: React.FC = () => {
     const [showAdvancedSearch, setShowAdvancedSearch] = useState<boolean>(false);
     const [advancedSearchTypes, setAdvancedSearchTypes] = useState<string[]>([]);
     const [selectedVariants, setSelectedVariants] = useState<{[key: string]: CardVariant}>({});
+    const [lastClickedIndex, setLastClickedIndex] = useState<number | null>(null);
+    const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -149,20 +152,20 @@ const ResultsPage: React.FC = () => {
             'CGC 10 Pristine': 0,
         };
 
-        return results.reduce((totals, item) => {
-            const count = parseInt(item.card_count) || 0; // Convert card_count to an integer
+        return results
+            .filter(item => !item.isExcluded) // Only include non-excluded items
+            .reduce((totals, item) => {
+                const count = parseInt(item.card_count) || 0;
+                totals.card_count += count;
 
-            totals.card_count += count; // Add card_count
+                Object.keys(totals).forEach(key => {
+                    if (key !== 'card_count' && key in item.grades) {
+                        totals[key] += (parseFloat(item.grades[key]?.replace(/[^0-9.-]+/g, '')) || 0) * count;
+                    }
+                });
 
-            // Calculate totals for each grade category multiplied by card_count
-            Object.keys(totals).forEach(key => {
-                if (key !== 'card_count' && key in item.grades) {
-                    totals[key] += (parseFloat(item.grades[key]?.replace(/[^0-9.-]+/g, '')) || 0) * count;
-                }
-            });
-
-            return totals;
-        }, initialTotals);
+                return totals;
+            }, initialTotals);
     };
 
     const totals = calculateTotals(results);
@@ -215,6 +218,45 @@ const ResultsPage: React.FC = () => {
         } catch (err) {
             console.error('Error fetching variants:', err);
         }
+    };
+
+    const handleRowClick = (index: number, event: React.MouseEvent) => {
+        if (event.shiftKey && lastClickedIndex !== null) {
+            // Handle shift-click for bulk selection
+            const start = Math.min(lastClickedIndex, index);
+            const end = Math.max(lastClickedIndex, index);
+            
+            const newResults = [...results];
+            const newSelectedRows = new Set(selectedRows);
+            
+            for (let i = start; i <= end; i++) {
+                newResults[i].isExcluded = !newResults[lastClickedIndex].isExcluded;
+                if (newResults[i].isExcluded) {
+                    newSelectedRows.add(i);
+                } else {
+                    newSelectedRows.delete(i);
+                }
+            }
+            
+            setResults(newResults);
+            setSelectedRows(newSelectedRows);
+        } else {
+            // Handle single click
+            const newResults = [...results];
+            newResults[index].isExcluded = !newResults[index].isExcluded;
+            
+            const newSelectedRows = new Set(selectedRows);
+            if (newResults[index].isExcluded) {
+                newSelectedRows.add(index);
+            } else {
+                newSelectedRows.delete(index);
+            }
+            
+            setResults(newResults);
+            setSelectedRows(newSelectedRows);
+        }
+        
+        setLastClickedIndex(index);
     };
 
     return (
@@ -275,8 +317,16 @@ const ResultsPage: React.FC = () => {
                 </thead>
                 <tbody>
                     {results.map((item, index) => (
-                        <>
-                            <tr key={`${index}-main`}>
+                        <React.Fragment key={`${index}-fragment`}>
+                            <tr 
+                                key={`${index}-main`}
+                                onClick={(e) => handleRowClick(index, e)}
+                                className={`
+                                    row-clickable
+                                    ${item.isExcluded ? 'row-excluded' : ''}
+                                    ${selectedRows.has(index) ? 'row-selected' : ''}
+                                `}
+                            >
                                 <td>
                                     <span className="img-hover-link">
                                         {item.card}
@@ -304,7 +354,10 @@ const ResultsPage: React.FC = () => {
                             {item.isAdvanced && item.cardVariants?.map((variant, vIndex) => (
                                 <tr 
                                     key={`${index}-variant-${vIndex}`}
-                                    className="variant-row"
+                                    className={`
+                                        variant-row
+                                        ${item.isExcluded ? 'row-excluded' : ''}
+                                    `}
                                 >
                                     <td>
                                         <span className="variant-tag">{variant.type}</span>
@@ -328,7 +381,7 @@ const ResultsPage: React.FC = () => {
                                     </td>
                                 </tr>
                             ))}
-                        </>
+                        </React.Fragment>
                     ))}
                     <tr className="totals-row">
                         <td colSpan={2}><strong>Totals:</strong></td>
