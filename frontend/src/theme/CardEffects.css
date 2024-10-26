@@ -1,0 +1,72 @@
+.card-reveal-container {
+    perspective: 1500px;
+    transform-style: preserve-3d;
+}
+
+.card-container {
+    position: relative;
+    width: 300px;
+    height: 420px;
+    cursor: pointer;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-aura {
+    position: absolute;
+    inset: -20px;
+    border-radius: 15px;
+    pointer-events: none;
+}
+
+/* Rarity-based animations */
+.mythic-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.rare-spin {
+    animation: spin 8s linear infinite;
+}
+
+.hover {
+    animation: hover 2s ease-in-out infinite;
+}
+
+/* Aura effects */
+.legendary-flames {
+    background: radial-gradient(circle at center, 
+        rgba(255, 215, 0, 0.3),
+        rgba(255, 69, 0, 0.2),
+        transparent 70%);
+    filter: blur(20px);
+}
+
+.rare-glow {
+    background: radial-gradient(circle at center,
+        rgba(138, 43, 226, 0.2),
+        rgba(75, 0, 130, 0.1),
+        transparent 70%);
+    filter: blur(15px);
+}
+
+.blue-mist {
+    background: radial-gradient(circle at center,
+        rgba(0, 191, 255, 0.15),
+        rgba(30, 144, 255, 0.1),
+        transparent 70%);
+    filter: blur(10px);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotateZ(-2deg); }
+    50% { transform: translateY(-20px) rotateZ(2deg); }
+}
+
+@keyframes spin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+@keyframes hover {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}

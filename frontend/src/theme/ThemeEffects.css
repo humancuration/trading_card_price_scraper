@@ -1,0 +1,77 @@
+.theme-effect {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.fire-glow-effect {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+}
+
+.water-ripple-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.ripple {
+  position: absolute;
+  border: 2px solid rgba(51, 153, 255, 0.5);
+  border-radius: 50%;
+  transform-origin: center;
+}
+
+.spark {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+}
+
+.psychic-waves {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+}
+
+.dragon-aura {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(153, 51, 255, 0.2), transparent);
+  mix-blend-mode: screen;
+}
+
+.holo-shine {
+  position: absolute;
+  inset: 0;
+  background-size: 400% 400%;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+/* Add animation keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes spark {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Intensity modifiers */
+.theme-effect {
+  opacity: calc(var(--intensity, 1) * 0.8);
+  filter: brightness(calc(var(--intensity, 1) * 100%));
+}

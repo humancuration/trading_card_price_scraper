@@ -1,6 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import '../CSS Sheets/ResultsPage.css';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow,
+  Paper,
+  Button,
+  IconButton,
+  Tooltip,
+  Chip,
+  Card,
+  CardHeader,
+  CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Fade,
+  LinearProgress
+} from '@mui/material';
+import { 
+  Download, 
+  Help, 
+  Search, 
+  CheckCircle, 
+  Cancel,
+  ExpandMore 
+} from '@mui/icons-material';
 
 interface ResultData {
     card: string;
@@ -261,182 +291,109 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <motion.div 
-            className="results-container"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-        >
-            <div className="results-header">
-                <motion.h1
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                >
-                    Results
-                </motion.h1>
-                {error && <p>Error: {error}</p>}
-                <button onClick={downloadCSV} style={{ marginBottom: '20px' }} className="download-button">
-                    Download CSV
-                </button>
-                <AnimatePresence>
-                    {showAdvancedSearch && (
-                        <motion.div 
-                            className="advanced-search-controls"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <button 
-                                onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-                                className="toggle-advanced-button"
-                            >
-                                {showAdvancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search'}
-                            </button>
-                            <input 
-                                type="text"
-                                placeholder="Enter variant type (e.g., shadowless)"
-                                onChange={(e) => setAdvancedSearchTypes(
-                                    e.target.value.split(',').map(t => t.trim())
-                                )}
-                                className="variant-type-input"
-                            />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Card</th>
-                        <th>ID</th>
-                        <th>Card Count</th>
-                        {Object.keys(results[0]?.grades || {}).map((grade, index) => (
-                            <th key={index}>{grade}</th>
-                        ))}
-                        <th>Page Link</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {results.map((item, index) => (
-                        <React.Fragment key={`${index}-fragment`}>
-                            <tr 
-                                key={`${index}-main`}
-                                onClick={(e) => handleRowClick(index, e)}
-                                className={`
-                                    row-clickable
-                                    ${item.isExcluded ? 'row-excluded' : ''}
-                                    ${selectedRows.has(index) ? 'row-selected' : ''}
-                                `}
-                            >
-                                <td>
-                                    <span className="img-hover-link">
-                                        {item.card}
-                                        <span className="img-hover-tooltip">
-                                            <img src={item.img_link} alt="Card" />
-                                        </span>
-                                    </span>
-                                </td>
-                                <td>{item.id}</td>
-                                <td>{item.card_count}</td>
-                                {Object.values(item.grades).map((gradeValue, gradeIndex) => (
-                                    <td key={gradeIndex}>{gradeValue}</td>
+        <Card className="results-container">
+            <CardHeader 
+                title={
+                    <Typography variant="h4" component="h1">
+                        Results
+                    </Typography>
+                }
+                action={
+                    <Button
+                        variant="contained"
+                        startIcon={<Download />}
+                        onClick={downloadCSV}
+                    >
+                        Download CSV
+                    </Button>
+                }
+            />
+            <CardContent>
+                <TableContainer component={Paper} elevation={3}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Card</TableCell>
+                                <TableCell>ID</TableCell>
+                                <TableCell>Card Count</TableCell>
+                                {Object.keys(results[0]?.grades || {}).map((grade, index) => (
+                                    <TableCell key={index}>{grade}</TableCell>
                                 ))}
-                                <td>
-                                    <a href={item.final_link} target="_blank" rel="noopener noreferrer">View</a>
-                                </td>
-                                <td>
-                                    <input 
-                                        type="checkbox"
-                                        checked={item.isAdvanced}
-                                        onChange={() => handleAdvancedSearchToggle(index)}
-                                    />
-                                </td>
-                            </tr>
-                            {item.isAdvanced && item.cardVariants?.map((variant, vIndex) => (
-                                <tr 
-                                    key={`${index}-variant-${vIndex}`}
-                                    className={`
-                                        variant-row
-                                        ${item.isExcluded ? 'row-excluded' : ''}
-                                    `}
+                                <TableCell>Page Link</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {results.map((item, index) => (
+                                <TableRow 
+                                    key={index}
+                                    onClick={(e) => handleRowClick(index, e)}
+                                    className={item.isExcluded ? 'row-excluded' : ''}
+                                    hover
                                 >
-                                    <td>
-                                        <span className="variant-tag">{variant.type}</span>
-                                        <span className="img-hover-link">
-                                            {variant.name}
-                                            <span className="img-hover-tooltip">
-                                                <img src={variant.img_link} alt="Card Variant" />
-                                            </span>
-                                        </span>
-                                    </td>
-                                    <td>{variant.id}</td>
-                                    <td>{item.card_count}</td>
-                                    {/* Modified prices based on variant.price_modifier */}
-                                    {Object.entries(item.grades).map(([grade, price], gradeIndex) => (
-                                        <td key={gradeIndex}>
-                                            ${(parseFloat(price.replace(/[^0-9.-]+/g, '')) * variant.price_modifier).toFixed(2)}
-                                        </td>
+                                    <TableCell>
+                                        <Tooltip
+                                            title={
+                                                <img 
+                                                    src={item.img_link} 
+                                                    alt={item.card} 
+                                                    style={{ maxWidth: 200 }}
+                                                />
+                                            }
+                                            arrow
+                                            placement="right"
+                                        >
+                                            <span>{item.card}</span>
+                                        </Tooltip>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip 
+                                            label={item.id}
+                                            size="small"
+                                            variant="outlined"
+                                        />
+                                    </TableCell>
+                                    <TableCell>{item.card_count}</TableCell>
+                                    {Object.values(item.grades).map((gradeValue, gradeIndex) => (
+                                        <TableCell key={gradeIndex}>{gradeValue}</TableCell>
                                     ))}
-                                    <td>
-                                        <a href={variant.final_link} target="_blank" rel="noopener noreferrer">View</a>
-                                    </td>
-                                </tr>
+                                    <TableCell>
+                                        <a href={item.final_link} target="_blank" rel="noopener noreferrer">View</a>
+                                    </TableCell>
+                                    <TableCell>
+                                        <input 
+                                            type="checkbox"
+                                            checked={item.isAdvanced}
+                                            onChange={() => handleAdvancedSearchToggle(index)}
+                                        />
+                                    </TableCell>
+                                </TableRow>
                             ))}
-                        </React.Fragment>
-                    ))}
-                    <tr className="totals-row">
-                        <td colSpan={2}><strong>Totals:</strong></td>
-                        <td>{totals.card_count}</td>
-                        {Object.keys(totals).filter(key => key !== 'card_count').map((key, index) => (
-                            <td key={index}>${totals[key].toFixed(2)}</td>
-                        ))}
-                        <td></td>
-                    </tr>
-                    
-                    {showEstimatedTotals && (
-                        <tr className="estimated-totals-row">
-                            <td colSpan={2}><strong>Estimated Totals:</strong></td>
-                            <td>{totals.card_count}</td>
-                            {Object.entries(calculateEstimatedTotals()).map(([grade, total], index) => (
-                                <td key={index} className="estimated-total">
-                                    ${total.toFixed(2)}
-                                </td>
-                            ))}
-                            <td></td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-            <Button
-                startIcon={<HelpOutline />}
-                onClick={() => setShowGuide(true)}
-                className="help-button"
-            >
-                CSV Format Guide
-            </Button>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-            {showGuide && (
-                <div className="modal-overlay" onClick={() => setShowGuide(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2>CSV Format Guide</h2>
-                            <button 
-                                className="close-button"
-                                onClick={() => setShowGuide(false)}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <CSVGuideContent />
-                        </div>
-                    </div>
-                </div>
-            )}
-        </motion.div>
+                <Dialog 
+                    open={showGuide} 
+                    onClose={() => setShowGuide(false)}
+                    TransitionComponent={Fade}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogTitle>
+                        CSV Format Guide
+                        <IconButton
+                            onClick={() => setShowGuide(false)}
+                            sx={{ position: 'absolute', right: 8, top: 8 }}
+                        >
+                            <Close />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent>
+                        <CSVGuideContent />
+                    </DialogContent>
+                </Dialog>
+            </CardContent>
+        </Card>
     );
 };
 
