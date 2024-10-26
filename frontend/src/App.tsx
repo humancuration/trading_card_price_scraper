@@ -1,38 +1,36 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './Components/Navigation/Navbar';
 import InputRows from './Components/InputRows';
 import ResultsPage from './Components/ResultsPage';
 import AboutMe from './Components/AboutMe';
-import DarkMode from './Components/DarkMode';
-import { ThemeProvider } from './theme/ThemeContext';
+import UserDashboard from './Components/UserDashboard/UserDashboard';
+import PackSimulator from './Components/PackOpening/PackSimulator';
+import PackValueAnalytics from './Components/Educational/PackValueAnalytics';
+import ShopPurchaseTracker from './Components/ShopTracker/ShopPurchaseTracker';
 import AdminDashboard from './admin/AdminDashboard';
+import { ThemeProvider } from './theme/ThemeContext';
 import { SoundProvider } from './interactions/SoundManager';
+import EnhancedPageTransition from './Components/transitions/EnhancedPageTransition';
 
 const App: React.FC = () => {
   return (
     <ThemeProvider>
       <SoundProvider>
         <Router>
-          <DarkMode />
-          
-          <nav>
-            <Link to="/">
-              <button className="nav-button">Home</button>
-            </Link>
-            <Link to="/about">
-              <button className="nav-button" style={{margin: '10px 10px'}}>About Me</button>
-            </Link>
-            <Link to="/admin">
-              <button className="nav-button">Admin Panel</button>
-            </Link>
-          </nav>
-          
-          <Routes>
-            <Route path="/" element={<InputRows />} />
-            <Route path="/results" element={<ResultsPage />} />
-            <Route path="/about" element={<AboutMe />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Routes>
+          <Navbar />
+          <EnhancedPageTransition>
+            <Routes>
+              <Route path="/" element={<InputRows />} />
+              <Route path="/results" element={<ResultsPage />} />
+              <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/pack-simulator" element={<PackSimulator />} />
+              <Route path="/shop-tracker" element={<ShopPurchaseTracker />} />
+              <Route path="/analytics" element={<PackValueAnalytics setData="default" />} />
+              <Route path="/about" element={<AboutMe />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Routes>
+          </EnhancedPageTransition>
         </Router>
       </SoundProvider>
     </ThemeProvider>

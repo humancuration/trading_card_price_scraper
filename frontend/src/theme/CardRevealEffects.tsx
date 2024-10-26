@@ -21,7 +21,7 @@ export interface RevealSequence {
     };
 }
 
-const revealSequences: Record<string, RevealSequence> = {
+export const revealSequences: Record<string, RevealSequence> = {
     mythic: {
         preDelay: 0.5,
         flipDuration: 1.2,
