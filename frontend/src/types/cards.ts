@@ -167,36 +167,42 @@ export interface CardAnimationConfig {
 
 export const cardAnimationMappings: Record<Rarity, CardAnimationConfig> = {
     'Common': {
+        rarity: 'Common',
         animations: ['basic'],
         particles: ['simple'],
         sounds: ['card_flip'],
         haptics: [50]
     },
     'Uncommon': {
+        rarity: 'Uncommon',
         animations: ['shine'],
         particles: ['sparkle'],
         sounds: ['card_flip', 'sparkle'],
         haptics: [50, 30]
     },
     'Rare': {
+        rarity: 'Rare',
         animations: ['glow', 'float'],
         particles: ['stardust'],
         sounds: ['card_flip', 'rare_reveal'],
         haptics: [50, 30, 50]
     },
     'Ultra Rare': {
+        rarity: 'Ultra Rare',
         animations: ['prismatic', 'float'],
         particles: ['starburst', 'trail'],
         sounds: ['card_flip', 'ultra_reveal', 'sparkle'],
         haptics: [70, 40, 70, 40]
     },
     'Secret Rare': {
+        rarity: 'Secret Rare',
         animations: ['rainbow', 'float', 'pulse'],
         particles: ['rainbow', 'starburst', 'trail'],
         sounds: ['card_flip', 'secret_reveal', 'choir'],
         haptics: [100, 50, 100, 50, 100]
     },
     'Special': {
+        rarity: 'Special',
         animations: ['custom'],
         particles: ['custom'],
         sounds: ['custom'],

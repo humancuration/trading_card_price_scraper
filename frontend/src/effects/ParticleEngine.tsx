@@ -14,7 +14,7 @@ interface ParticleSystemProps {
     customBehavior?: (particle: THREE.Vector3, time: number) => void;
     lifespan?: number;
     emissionRate?: number;
-    blending?: THREE.BlendingDstFactor;
+    blending?: THREE.Blending;
 }
 
 export const ParticleSystem: React.FC<ParticleSystemProps> = ({
@@ -29,7 +29,7 @@ export const ParticleSystem: React.FC<ParticleSystemProps> = ({
     customBehavior,
     lifespan = 2,
     emissionRate = 50,
-    blending = THREE.AdditiveBlending
+    blending = THREE.AdditiveBlending as THREE.Blending
 }) => {
     const particles = useRef<THREE.Points>(null);
     const particleData = useRef<Float32Array>();
@@ -127,7 +127,7 @@ export const ParticleSystem: React.FC<ParticleSystemProps> = ({
             </bufferGeometry>
             <pointsMaterial
                 size={size}
-                color={color}
+                color={new THREE.Color(Array.isArray(color) ? color[0] : color)}
                 transparent
                 blending={blending}
                 depthWrite={false}

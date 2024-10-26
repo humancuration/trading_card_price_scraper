@@ -92,8 +92,11 @@ const PerformanceMetrics: React.FC = () => {
 
             // Keep only last 60 data points
             Object.keys(newData).forEach(key => {
-                if (Array.isArray(newData[key]) && newData[key].length > 60) {
-                    newData[key] = newData[key].slice(-60);
+                if (Array.isArray(newData[key as keyof typeof newData])) {
+                    const arr = newData[key as keyof typeof newData] as any[];
+                    if (arr.length > 60) {
+                        (newData[key as keyof typeof newData] as any[]) = arr.slice(-60);
+                    }
                 }
             });
 
@@ -122,7 +125,9 @@ const PerformanceMetrics: React.FC = () => {
 
     const chartOptions = {
         responsive: true,
-        animation: false,
+        animation: {
+            duration: 0  // Set duration to 0 to disable animations
+        },
         scales: {
             y: {
                 beginAtZero: true
