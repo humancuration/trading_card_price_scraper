@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../CSS Sheets/ResultsPage.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ResultData {
     card: string;
@@ -260,47 +261,50 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="results-container">
-            <h1>Results</h1>
-            {error && <p>Error: {error}</p>}
-            <button onClick={downloadCSV} style={{ marginBottom: '20px' }} className="download-button">
-                Download CSV
-            </button>
-            <div className="advanced-search-controls">
-                <button 
-                    onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-                    className="toggle-advanced-button"
+        <motion.div 
+            className="results-container"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <div className="results-header">
+                <motion.h1
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 }}
                 >
-                    {showAdvancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search'}
+                    Results
+                </motion.h1>
+                {error && <p>Error: {error}</p>}
+                <button onClick={downloadCSV} style={{ marginBottom: '20px' }} className="download-button">
+                    Download CSV
                 </button>
-                {showAdvancedSearch && (
-                    <div className="advanced-options">
-                        <label>
+                <AnimatePresence>
+                    {showAdvancedSearch && (
+                        <motion.div 
+                            className="advanced-search-controls"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <button 
+                                onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                                className="toggle-advanced-button"
+                            >
+                                {showAdvancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search'}
+                            </button>
                             <input 
-                                type="checkbox" 
-                                onChange={(e) => {
-                                    const newResults = results.map(r => ({
-                                        ...r,
-                                        isAdvanced: e.target.checked
-                                    }));
-                                    setResults(newResults);
-                                    if (e.target.checked) {
-                                        results.forEach(fetchCardVariants);
-                                    }
-                                }}
+                                type="text"
+                                placeholder="Enter variant type (e.g., shadowless)"
+                                onChange={(e) => setAdvancedSearchTypes(
+                                    e.target.value.split(',').map(t => t.trim())
+                                )}
+                                className="variant-type-input"
                             />
-                            Check/Uncheck All Advanced Search
-                        </label>
-                        <input 
-                            type="text"
-                            placeholder="Enter variant type (e.g., shadowless)"
-                            onChange={(e) => setAdvancedSearchTypes(
-                                e.target.value.split(',').map(t => t.trim())
-                            )}
-                            className="variant-type-input"
-                        />
-                    </div>
-                )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             <table>
@@ -432,7 +436,7 @@ const ResultsPage: React.FC = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 };
 
