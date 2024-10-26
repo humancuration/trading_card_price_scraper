@@ -25,6 +25,7 @@ class RowData(BaseModel):
     reverse_holo: bool
     first_edition: bool
     card_count: int
+    estimated_grades: Optional[str] = None  # New field
 
 class CardInput(BaseModel):
     cards: List[RowData]
@@ -57,7 +58,8 @@ async def submit_cards(card_input: CardInput, request: Request):  # Accept card_
             "holo": row.holo,
             "reverse_holo": row.reverse_holo,
             "first_edition": row.first_edition,
-            "card_count": row.card_count
+            "card_count": row.card_count,
+            "estimated_grades": row.estimated_grades.split(',') if row.estimated_grades else None
         }
         data.append(card_data)
 

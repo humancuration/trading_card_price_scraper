@@ -11,6 +11,7 @@ interface ResultData {
     };
     final_link: string;
     img_link: string;
+    estimatedGrades?: string[];
 }
 
 interface Totals {
@@ -20,6 +21,8 @@ interface Totals {
 const ResultsPage: React.FC = () => {
     const [results, setResults] = useState<ResultData[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [selectedGrades, setSelectedGrades] = useState<{[key: string]: string}>({});
+    const [showEstimatedTotals, setShowEstimatedTotals] = useState(false);
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -53,6 +56,7 @@ const ResultsPage: React.FC = () => {
                         grades,
                         final_link: data.results.final_link[i],
                         img_link: data.results.img_link[i],
+                        estimatedGrades: data.results.estimatedGrades ? data.results.estimatedGrades[i].split(',') : undefined,
                     });
                 }
                 setResults(formattedResults);
@@ -146,6 +150,29 @@ const ResultsPage: React.FC = () => {
 
     const totals = calculateTotals(results);
 
+    const handleGradeClick = (cardIndex: number, grade: string) => {
+        setSelectedGrades(prev => ({
+            ...prev,
+            [`${cardIndex}`]: grade
+        }));
+        setShowEstimatedTotals(true);
+    };
+
+    const calculateEstimatedTotals = () => {
+        return results.reduce((totals, item, index) => {
+            const count = parseInt(item.card_count) || 0;
+            const selectedGrade = selectedGrades[index];
+            
+            if (selectedGrade) {
+                const priceStr = item.grades[selectedGrade];
+                const price = parseFloat(priceStr?.replace(/[^0-9.-]+/g, '') || '0');
+                totals[selectedGrade] = (totals[selectedGrade] || 0) + (price * count);
+            }
+            
+            return totals;
+        }, {} as {[key: string]: number});
+    };
+
     return (
         <div className="results-page">
             <h1>Results</h1>
@@ -186,7 +213,7 @@ const ResultsPage: React.FC = () => {
                             </td>
                         </tr>
                     ))}
-                    <tr>
+                    <tr className="totals-row">
                         <td colSpan={2}><strong>Totals:</strong></td>
                         <td>{totals.card_count}</td>
                         {Object.keys(totals).filter(key => key !== 'card_count').map((key, index) => (
@@ -194,6 +221,19 @@ const ResultsPage: React.FC = () => {
                         ))}
                         <td></td>
                     </tr>
+                    
+                    {showEstimatedTotals && (
+                        <tr className="estimated-totals-row">
+                            <td colSpan={2}><strong>Estimated Totals:</strong></td>
+                            <td>{totals.card_count}</td>
+                            {Object.entries(calculateEstimatedTotals()).map(([grade, total], index) => (
+                                <td key={index} className="estimated-total">
+                                    ${total.toFixed(2)}
+                                </td>
+                            ))}
+                            <td></td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
         </div>

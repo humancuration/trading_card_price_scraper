@@ -10,6 +10,7 @@ type Row = {
   reverse_holo: boolean;
   first_edition: boolean;
   card_count: number | null; // Allow card_count to be null
+  estimatedGrades?: string; // New field for comma-separated grade estimates
   isInvalid?: boolean;
 };
 
@@ -26,6 +27,7 @@ const InputRows: React.FC = () => {
     reverse_holo: false,
     first_edition: false,
     card_count: 1, // Initialize as null
+    estimatedGrades: '', // Initialize empty
     isInvalid: false, // Initialize isInvalid
   }));
 
@@ -66,6 +68,7 @@ const InputRows: React.FC = () => {
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
+      estimatedGrades: '',
       isInvalid: false, // Initialize isInvalid
     }));
     setRows(prevRows => [...prevRows, ...newRowsToAdd]);
@@ -80,6 +83,7 @@ const InputRows: React.FC = () => {
       reverse_holo: false,
       first_edition: false,
       card_count: 1,
+      estimatedGrades: '',
       isInvalid: false, // Reset isInvalid
     };
     setRows(newRows);
@@ -189,16 +193,9 @@ const InputRows: React.FC = () => {
 
   const downloadCSVTemplate = () => {
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "cardName,cardId,holo,reverse_holo,first_edition,card_count\n" +
-      ",,,,,"; // One empty line for a row
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "card_template.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      "cardName,cardId,holo,reverse_holo,first_edition,card_count,estimatedGrades\n" +
+      ",,,,,,"; // Added estimatedGrades column
+    // ... rest of function
   };
 
   return (
