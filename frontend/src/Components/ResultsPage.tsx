@@ -23,6 +23,7 @@ const ResultsPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedGrades, setSelectedGrades] = useState<{[key: string]: string}>({});
     const [showEstimatedTotals, setShowEstimatedTotals] = useState(false);
+    const [showGuide, setShowGuide] = useState(false);
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -174,7 +175,7 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="results-page">
+        <div className="results-container">
             <h1>Results</h1>
             {error && <p>Error: {error}</p>}
             <button onClick={downloadCSV} style={{ marginBottom: '20px' }} className="download-button">
@@ -236,6 +237,32 @@ const ResultsPage: React.FC = () => {
                     )}
                 </tbody>
             </table>
+            <Button
+                startIcon={<HelpOutline />}
+                onClick={() => setShowGuide(true)}
+                className="help-button"
+            >
+                CSV Format Guide
+            </Button>
+
+            {showGuide && (
+                <div className="modal-overlay" onClick={() => setShowGuide(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>CSV Format Guide</h2>
+                            <button 
+                                className="close-button"
+                                onClick={() => setShowGuide(false)}
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <CSVGuideContent />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
